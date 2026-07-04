@@ -12,10 +12,14 @@
 //Cấu hình tần số hoạt động của SX1278 = 433MHz
 #define BAND 433E6
 
+unsigned int packetCounter = 0;
+
 void setup(){
   //Start Serial
   Serial.begin(115200);
-  while(!Serial.available()) Serial.println("Waitting.....");
+  while(!Serial) {
+    delay(10); // Đợi cổng Serial trên ESP32-S3 khởi tạo xong
+  }
   Serial.println("---START---");
 
   //LoRa(sx1278) config
@@ -49,5 +53,20 @@ void setup(){
   delay(200);
 }
 void loop(){
-  //None
+  Serial.println("Dang bat dau dong goi va phat goi tin hieu so");
+  Serial.println(packetCounter);
+  
+  LoRa.beginPacket();;
+  
+  //
+  LoRa.print("ESP32-S3 NODE; Pkt:"); // ghi du lieu dang chuoi chuan IoT vao bo dem FIFO
+  LoRa.print(packetCounter);
+
+  LoRa.endPacket();
+
+  Serial.println("Da gui xong goi tin ra khong gian");
+
+  packetCounter++;
+  
+  delay(3000);
 }
